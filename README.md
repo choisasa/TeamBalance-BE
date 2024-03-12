@@ -25,4 +25,4 @@ etc : 그 외 메모사항이 있는 경우
 TeamBalance's notion
  -----
 
-https://www.notion.so/2-SA-a86ba63e762146af8516ebfdd5d44846
+https://ancient-tumbleweed-92a.notion.site/2-SA-a86ba63e762146af8516ebfdd5d44846
