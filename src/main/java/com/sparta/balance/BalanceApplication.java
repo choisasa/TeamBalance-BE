@@ -1,13 +1,13 @@
-package com.sparta.hh99_mini_project;
+package com.sparta.balance;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Hh99MiniProjectApplication {
+public class BalanceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Hh99MiniProjectApplication.class, args);
+        SpringApplication.run(BalanceApplication.class, args);
     }
 
 }
