@@ -4,6 +4,12 @@
 - [ ]  설명 : 밸런스게임을 하는 웹사이트를 만듭니다.
 
 -----
+ UCD
+-----
+
+![image](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/6d5da9f1-5d92-4f0e-86c5-b18344f76afd)
+
+-----
 Commit Convention
 -----
  
