@@ -22,7 +22,7 @@ etc : 그 외 메모사항이 있는 경우
 ✅ 저녁 식사 후 진행사항을 서로 공유해요. (유동적)
 
  -----
-API 명세서
+TeamBalance's notion
  -----
 
-https://www.notion.so/6e1a0f3d2eb64901bb1a5cb2e5ae31a2?v=c0fc2c141b7a4e34b975151c5edfb776&pvs=4
+https://www.notion.so/2-SA-a86ba63e762146af8516ebfdd5d44846
