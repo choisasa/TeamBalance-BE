@@ -2,11 +2,7 @@ package com.sparta.balance.domain.comment.controller;
 
 import com.sparta.balance.domain.comment.dto.CommentRequestDto;
 import com.sparta.balance.domain.comment.dto.CommentResponseDto;
-import com.sparta.balance.domain.comment.entity.Comment;
-import com.sparta.balance.domain.comment.repository.CommentRepository;
 import com.sparta.balance.domain.comment.service.CommentService;
-import com.sparta.balance.domain.user.entity.User;
-import com.sparta.balance.global.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
