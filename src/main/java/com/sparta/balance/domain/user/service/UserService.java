@@ -68,12 +68,29 @@ public class UserService {
         UserRoleEnum role = UserRoleEnum.USER;
 
         /*DB에 유저 정보 저장*/
-        User user = new User(requestDto.getEmail(), requestDto.getPassword(), requestDto.getUsername(), role);
+        User user = new User(requestDto.getEmail(), password, requestDto.getUsername(), role);
 
         userRepository.save(user);
     }
 
     public UserResponseDto loginUser(LoginRequestDto requestDto) {
-        return null;
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+
+        return new UserResponseDto(user.getUsername(), token);
+
+    }
+
+    public void getAuthenticatedUser(User user) {
+
     }
 }
