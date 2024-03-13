@@ -64,12 +64,8 @@ public class CommentService {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
-        // gameId를 사용하여 해당 게임의 댓글을 조회하는 로직을 구현해야 합니다.
-        // 예시로 게임 ID를 사용하여 해당 게임의 댓글을 조회하는 방법을 보여드리겠습니다.
-        // 이 부분은 실제 비즈니스 로직에 맞게 수정하셔야 합니다.
         List<Comment> comments = commentRepository.findByGameId(gameId);
 
-        // 댓글 목록을 CommentResponseDto로 변환하여 반환합니다.
         List<CommentResponseDto> responseDtos = comments.stream()
                 .map(comment -> CommentResponseDto.builder()
                         .username(comment.getUser().getUsername())

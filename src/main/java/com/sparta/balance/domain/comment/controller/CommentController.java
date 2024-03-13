@@ -48,7 +48,6 @@ public class CommentController {
             @PathVariable("id") Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         List<CommentResponseDto> responseDtoList = commentService.getComment(id, userDetails);
-        // Return the list of comments
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
@@ -76,9 +75,9 @@ public class CommentController {
             commentService.deleteComment(commentId, userDetails);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException ex) {
-            throw ex; // ResponseStatusException을 재발생시켜 올바른 HTTP 상태 코드 처리를 보장합니다.
+            throw ex;
         } catch (Exception ex) {
-            // 삭제 중에 예기치 않은 예외가 발생하면 처리하고 500 내부 서버 오류 상태 코드를 반환합니다.
+            // 삭제 중에 예기치 않은 예외가 발생하면 처리하고 500 내부 서버 오류 상태 코드를 반환
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "댓글 삭제에 실패했습니다", ex);
         }
     }
