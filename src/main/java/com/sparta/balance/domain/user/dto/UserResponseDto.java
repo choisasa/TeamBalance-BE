@@ -9,9 +9,11 @@ import lombok.Getter;
 public class UserResponseDto {
     @NotBlank
     private String username;
-
+    private String token;
+    private String type = "Bearer";
     @Builder
-    public UserResponseDto(String username) {
+    public UserResponseDto(String username, String token) {
         this.username = username;
+        this.token = token;
     }
 }
