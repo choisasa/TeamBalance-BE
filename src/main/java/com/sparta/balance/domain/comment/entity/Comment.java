@@ -34,5 +34,4 @@ public class Comment {
     @JoinColumn(name = "game_id")
     @Schema(description = "게임 ID", nullable = false, example = "1")
     private Game game;
-
 }
