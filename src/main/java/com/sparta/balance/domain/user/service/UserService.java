@@ -7,6 +7,7 @@ import com.sparta.balance.domain.user.entity.User;
 import com.sparta.balance.domain.user.entity.UserRoleEnum;
 import com.sparta.balance.global.jwt.JwtUtil;
 import com.sparta.balance.domain.user.repository.UserRepository;
+import com.sparta.balance.global.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    public UserService(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+    private final RefreshTokenService refreshTokenService;
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
     }
 
     /*
@@ -73,24 +77,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /*로그인 로직
+    * 입력된 이메일과 비밀번호 일치 여부 검사 후 유저 정보로 JWT 토큰 생성 후 유저 이름과 함께 반환*/
     public UserResponseDto loginUser(LoginRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
+        /*이메일 확인*/
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
 
+        /*비밀번호 확인*/
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+        /*JWT 토큰 발급*/
+        String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole());
+        String refreshTokenString = jwtUtil.createRefreshToken(user.getEmail(), user.getRole());
+        refreshTokenService.createAndSaveRefreshToken(user.getEmail(), refreshTokenString);
 
-        return new UserResponseDto(user.getUsername(), token);
-
+        return new UserResponseDto(user.getUsername(), accessToken, refreshTokenString);
     }
 
-    public void getAuthenticatedUser(User user) {
-
+    /*로그아웃 로직*/
+    public void logoutUser(String refreshTokenString) {
+        refreshTokenService.deleteRefreshToken(refreshTokenString); /*리프레시 토큰 삭제*/
     }
 }
