@@ -58,18 +58,10 @@ public class LikeService {
         Game game = getGameById(gameId);
 
         /*선택지 검증*/
-        Choice choice = choiceRepository.findById(choiceId)
-                .orElseThrow(() -> new CustomApiException(CHOICE_ID_NOT_FOUND.getMessage()));
+        Choice choice = getChoiceById(choiceId);
 
-        /*좋아요 추가
-        * 있으면 취소(삭제) 없으면 추가*/
-        Optional<Like> existingLike = likeRepository.findByGameAndChoiceAndUser(game, choice, user);
-        if (existingLike.isPresent()) {
-            likeRepository.delete(existingLike.get());
-        } else {
-            Like newLike = new Like(user, choice, null);
-            likeRepository.save(newLike);
-        }
+        /*좋아요 추가(취소)*/
+        toggleLike(user, choice, null);
     }
 
     @Transactional
@@ -83,19 +75,24 @@ public class LikeService {
         Game game = getGameById(gameId);
 
         /*댓글 검증*/
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomApiException(COMMENT_ID_NOT_FOUND.getMessage()));
+        Comment comment = getCommentById(commentId);
 
-        /*좋아요 추가
-         * 있으면 취소(삭제) 없으면 추가*/
-        Optional<Like> existingLike = likeRepository.findByGameAndCommentAndUser(game, comment, user);
-        if (existingLike.isPresent()) {
-            likeRepository.delete(existingLike.get());
-        } else {
-            Like newLike = new Like(user, null, comment);
-            likeRepository.save(newLike);
-        }
+        /*좋아요 추가(취소)*/
+        toggleLike(user, null, comment);
+    }
 
+    /*좋아요 기능 메서드
+    * 좋아용 없으면 추가 있으면 취소(삭제)
+    * choice와 comment에 대한 좋아요 기능*/
+    private void toggleLike(User user, Choice choice, Comment comment) {
+        Optional<Like> existingLike = (choice != null)
+                ? likeRepository.findByChoiceAndUser(choice, user)
+                : likeRepository.findByCommentAndUser(comment, user);
+
+        existingLike.ifPresentOrElse(
+                likeRepository::delete,
+                () -> likeRepository.save(new Like(user, choice, comment))
+        );
     }
 
     /*사용자 검증 메서드*/
@@ -110,5 +107,17 @@ public class LikeService {
     private Game getGameById(Long gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomApiException(GAME_ID_NOT_FOUND.getMessage()));
+    }
+
+    /*선택지 검증 메서드*/
+    private Choice getChoiceById(Long choiceId) {
+        return choiceRepository.findById(choiceId)
+                .orElseThrow(() -> new CustomApiException(CHOICE_ID_NOT_FOUND.getMessage()));
+    }
+
+    /*댓글 검증 메서드*/
+    private Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomApiException(COMMENT_ID_NOT_FOUND.getMessage()));
     }
 }
