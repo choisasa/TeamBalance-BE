@@ -6,8 +6,10 @@ import com.sparta.balance.domain.game.entity.Choice;
 import com.sparta.balance.domain.game.entity.Game;
 import com.sparta.balance.domain.game.repository.ChoiceRepository;
 import com.sparta.balance.domain.game.repository.GameRepository;
-import com.sparta.balance.domain.like.entity.Like;
-import com.sparta.balance.domain.like.repository.LikeRepository;
+import com.sparta.balance.domain.like.entity.ChoiceLike;
+import com.sparta.balance.domain.like.entity.CommentLike;
+import com.sparta.balance.domain.like.repository.ChoiceLikeRepository;
+import com.sparta.balance.domain.like.repository.CommentLikeRepository;
 import com.sparta.balance.domain.user.entity.User;
 import com.sparta.balance.domain.user.repository.UserRepository;
 import com.sparta.balance.global.handler.exception.CustomApiException;
@@ -19,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.sparta.balance.global.handler.exception.ErrorCode.*;
+import static com.sparta.balance.global.handler.exception.ErrorCode.GAME_ID_NOT_FOUND;
+import static com.sparta.balance.global.handler.exception.ErrorCode.NOT_MATCH_MEMBER_ACCOUNT;
 
 @Slf4j(topic = "좋아요 서비스 로직")
 @Service
@@ -31,15 +34,17 @@ public class LikeService {
     * likeRepository : 좋아요 데이터 관리
     * gameRepository : 게임 데이터 확인
     * commentRepository : 댓글 데이터 확인*/
-    private final LikeRepository likeRepository;
+    private final ChoiceLikeRepository choiceLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final GameRepository gameRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final ChoiceRepository choiceRepository;
-    public LikeService(LikeRepository likeRepository, GameRepository gameRepository,
+    public LikeService(ChoiceLikeRepository choiceLikeRepository, CommentLikeRepository commentLikeRepository, GameRepository gameRepository,
                        CommentRepository commentRepository, UserRepository userRepository,
                        ChoiceRepository choiceRepository) {
-        this.likeRepository = likeRepository;
+        this.choiceLikeRepository = choiceLikeRepository;
+        this.commentLikeRepository = commentLikeRepository;
         this.gameRepository = gameRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
@@ -58,10 +63,22 @@ public class LikeService {
         Game game = getGameById(gameId);
 
         /*선택지 검증*/
-        Choice choice = getChoiceById(choiceId);
+        Choice choice = choiceRepository.findById(choiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid choice ID: " + choiceId));
+        if (!choice.getGame().getId().equals(gameId)) {
+            throw new IllegalArgumentException("Choice does not belong to the specified game");
+        }
 
         /*좋아요 추가(취소)*/
-        toggleLike(user, choice, null);
+        Optional<ChoiceLike> existingLike = choiceLikeRepository.findByUserAndChoice(user, choice);
+        if (existingLike.isPresent()) {
+            // 좋아요가 이미 있으면 삭제
+            choiceLikeRepository.delete(existingLike.get());
+        } else {
+            // 좋아요가 없으면 추가
+            ChoiceLike newLike = new ChoiceLike(user, choice);
+            choiceLikeRepository.save(newLike);
+        }
     }
 
     @Transactional
@@ -75,25 +92,29 @@ public class LikeService {
         Game game = getGameById(gameId);
 
         /*댓글 검증*/
-        Comment comment = getCommentById(commentId);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid comment ID: " + commentId));
+        if (!comment.getGame().getId().equals(gameId)) {
+            throw new IllegalArgumentException("Comment does not belong to the specified game");
+        }
 
         /*좋아요 추가(취소)*/
-        toggleLike(user, null, comment);
+        Optional<CommentLike> existingLike = commentLikeRepository.findByUserAndComment(user, comment);
+        if (existingLike.isPresent()) {
+            // 좋아요가 이미 있으면 삭제
+            commentLikeRepository.delete(existingLike.get());
+        } else {
+            // 좋아요가 없으면 추가
+            CommentLike newLike = new CommentLike(user, comment);
+            commentLikeRepository.save(newLike);
+        }
     }
 
     /*좋아요 기능 메서드
-    * 좋아용 없으면 추가 있으면 취소(삭제)
-    * choice와 comment에 대한 좋아요 기능*/
-    private void toggleLike(User user, Choice choice, Comment comment) {
-        Optional<Like> existingLike = (choice != null)
-                ? likeRepository.findByChoiceAndUser(choice, user)
-                : likeRepository.findByCommentAndUser(comment, user);
+    * 좋아요 없으면 추가 있으면 취소(삭제)
+    * choiceLike, commentLike 메서드*/
 
-        existingLike.ifPresentOrElse(
-                likeRepository::delete,
-                () -> likeRepository.save(new Like(user, choice, comment))
-        );
-    }
+
 
     /*사용자 검증 메서드*/
     private User getAuthenticatedUser() {
@@ -109,15 +130,15 @@ public class LikeService {
                 .orElseThrow(() -> new CustomApiException(GAME_ID_NOT_FOUND.getMessage()));
     }
 
-    /*선택지 검증 메서드*/
-    private Choice getChoiceById(Long choiceId) {
-        return choiceRepository.findById(choiceId)
-                .orElseThrow(() -> new CustomApiException(CHOICE_ID_NOT_FOUND.getMessage()));
-    }
-
-    /*댓글 검증 메서드*/
-    private Comment getCommentById(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomApiException(COMMENT_ID_NOT_FOUND.getMessage()));
-    }
+//    /*선택지 검증 메서드*/
+//    private Choice getChoiceById(Long choiceId) {
+//        return choiceRepository.findById(choiceId)
+//                .orElseThrow(() -> new CustomApiException(CHOICE_ID_NOT_FOUND.getMessage()));
+//    }
+//
+//    /*댓글 검증 메서드*/
+//    private Comment getCommentById(Long commentId) {
+//        return commentRepository.findById(commentId)
+//                .orElseThrow(() -> new CustomApiException(COMMENT_ID_NOT_FOUND.getMessage()));
+//    }
 }

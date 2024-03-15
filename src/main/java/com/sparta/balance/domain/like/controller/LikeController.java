@@ -27,7 +27,7 @@ public class LikeController {
 
     @Operation(summary = "밸런스 게임 선택지 좋아요", description = "밸런스 게임 선택지를 선택해서 좋아요를 추가/취소")
     @ApiResponse(responseCode = "200", description = "좋아요 추가/취소 성공")
-    @PostMapping("game/{gameId}/choices/{choiceId}/likes")
+    @PostMapping("/game/{gameId}/choices/{choiceId}/likes")
     public ResponseEntity<Void> likeChoice(@PathVariable Long gameId, @PathVariable Long choiceId) {
 
         likeService.likeChoice(gameId, choiceId);
@@ -37,7 +37,7 @@ public class LikeController {
 
     @Operation(summary = "밸런스 게임 댓글 좋아요", description = "밸런스 게임 댓글에 대한 좋아요")
     @ApiResponse(responseCode = "200", description = "댓글에 대한 좋아요 추가/취소 성공")
-    @PostMapping("game/{gameId}/comment/{commentId}/likes")
+    @PostMapping("/game/{gameId}/comment/{commentId}/likes")
     public ResponseEntity<Void> likeComment(@PathVariable Long gameId, @PathVariable Long commentId) {
 
         likeService.likeComment(gameId, commentId);

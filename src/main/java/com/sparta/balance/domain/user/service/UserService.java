@@ -72,7 +72,7 @@ public class UserService {
         UserRoleEnum role = UserRoleEnum.USER;
 
         /*DB에 유저 정보 저장*/
-        User user = new User(requestDto.getEmail(), requestDto.getPassword(), requestDto.getUsername(), role);
+        User user = new User(requestDto.getEmail(), password, requestDto.getUsername(), role);
 
         userRepository.save(user);
     }

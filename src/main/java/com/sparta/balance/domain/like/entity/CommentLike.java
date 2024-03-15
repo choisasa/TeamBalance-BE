@@ -1,44 +1,36 @@
 package com.sparta.balance.domain.like.entity;
 
 import com.sparta.balance.domain.comment.entity.Comment;
-import com.sparta.balance.domain.game.entity.Choice;
 import com.sparta.balance.domain.user.entity.User;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Tag(name = "Comment Like Table", description = "댓글에 대한 좋아요 테이블")
 @Entity
 @Getter
-@Table(name = "likes")
-@IdClass(LikeId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+@Table(name = "comment_likes")
+public class CommentLike {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @Schema(description = "좋아요를 준 유저 ID")
     private User user;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "choice_id")
-    @Schema(description = "좋아요가 달린 선택지 ID")
-    private Choice choice;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "comment_id")
-    @Schema(description = "좋아요가 달린 댓글 ID")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @Builder
-    public Like(User user, Choice choice, Comment comment) {
+    public CommentLike(User user, Comment comment) {
         this.user = user;
-        this.choice = choice;
         this.comment = comment;
     }
 }
