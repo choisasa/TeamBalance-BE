@@ -103,7 +103,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, UserDetails userDetails) {
+    public void deleteComment(Long id,Long commentId, UserDetails userDetails) {
         // 유저 id로 댓글 찾기
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
@@ -116,6 +116,9 @@ public class CommentService {
         // 예외
         if (!comment.getUser().equals(currentUser)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "해당 댓글을 삭제할 수 있는 권한이 없습니다.");
+        }
+        if (!comment.getGame().getId().equals(id)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"지정된 게임에 속하지 않은 댓글은 삭제할 수 없습니다.");
         }
 
         // 댓글 삭제

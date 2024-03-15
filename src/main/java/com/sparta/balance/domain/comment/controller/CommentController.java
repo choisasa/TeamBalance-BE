@@ -68,7 +68,7 @@ public class CommentController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         try {
-            commentService.deleteComment(commentId, userDetails);
+            commentService.deleteComment(id, commentId, userDetails);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException ex) {
             throw ex;
