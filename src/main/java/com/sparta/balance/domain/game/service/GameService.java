@@ -114,27 +114,24 @@ public class GameService {
                         choice -> choiceLikeRepository.countByChoiceId(choice.getId())
                 ));
 
-        // 댓글에 대한 좋아요 개수 계산
-        List<Comment> comments = commentRepository.findByGameId(id);
-        long numberOfCommentLikes = comments.stream()
-                .mapToLong(comment -> commentLikeRepository.countByCommentId(comment.getId()))
-                .sum();
+//        // 댓글에 대한 좋아요 개수 계산
+//        List<Comment> comments = commentRepository.findByGameId(id);
+//        long numberOfCommentLikes = comments.stream()
+//                .mapToLong(comment -> commentLikeRepository.countByCommentId(comment.getId()))
+//                .sum();
 
-        // 각 댓글에 대한 좋아요 개수 계산
-        Map<Long, Long> commentLikeCounts = comments.stream()
+        Map<Long, Long> commentLikeCounts = commentRepository.findByGameId(id)
+                .stream()
                 .collect(Collectors.toMap(
                         Comment::getId,
                         comment -> commentLikeRepository.countByCommentId(comment.getId())
                 ));
 
-        // GameResponseDto 생성
         return GameLikesResponseDto.builder()
                 .id(id)
                 .gameTitle(game.getGameTitle())
                 .choices(choices)
-                .comments(comments)
                 .choiceLikeCounts(choiceLikeCounts)
-                .numberOfCommentLikes(numberOfCommentLikes)
                 .commentLikeCounts(commentLikeCounts)
                 .build();
     }

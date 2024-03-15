@@ -1,5 +1,6 @@
 package com.sparta.balance.domain.game.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.balance.domain.like.entity.ChoiceLike;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +32,7 @@ public class Choice {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "choice")
     private List<ChoiceLike> likes = new ArrayList<>();
 
