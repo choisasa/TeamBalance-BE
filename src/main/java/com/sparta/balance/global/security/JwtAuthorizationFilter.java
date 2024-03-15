@@ -1,5 +1,6 @@
 package com.sparta.balance.global.security;
 
+import com.sparta.balance.global.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

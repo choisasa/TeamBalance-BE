@@ -8,6 +8,7 @@ public enum ErrorCode {
     MEMBER_ACCOUNT_NOT_FOUND("찾을 수 없는 계정입니다."),
     COMMENT_ID_NOT_FOUND("찾을 수 없는 댓글 번호입니다."),
     GAME_ID_NOT_FOUND("찾을 수 없는 게임 번호입니다."),
+    CHOICE_ID_NOT_FOUND("찾을 수 없는 선택지 번호입니다."),
     NOT_MATCH_MEMBER_ACCOUNT("일치하지 않는 계정입니다."),
     ;
 
