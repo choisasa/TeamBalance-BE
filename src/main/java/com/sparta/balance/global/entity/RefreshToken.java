@@ -33,4 +33,5 @@ public class RefreshToken {
         this.email = email;
         this.expiryDate = expiryDate;
     }
+<<<<<<< HEAD
 }

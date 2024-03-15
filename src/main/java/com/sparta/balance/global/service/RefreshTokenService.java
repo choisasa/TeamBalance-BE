@@ -17,7 +17,7 @@ import java.util.Optional;
 public class RefreshTokenService {
 
     /*리프레시 토큰 관리 로직
-     * 토큰 생성, 저장, 검증, 삭제, 액세스 토큰 갱신 기능 수행*/
+    * 토큰 생성, 저장, 검증, 삭제, 액세스 토큰 갱신 기능 수행*/
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
@@ -67,4 +67,5 @@ public class RefreshTokenService {
             }
         });
     }
+<<<<<<< HEAD
 }
