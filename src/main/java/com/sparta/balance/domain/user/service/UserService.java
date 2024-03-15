@@ -102,6 +102,7 @@ public class UserService {
 
     /*로그아웃 로직*/
     public void logoutUser(String refreshTokenString) {
-        refreshTokenService.deleteRefreshToken(refreshTokenString); /*리프레시 토큰 삭제*/
+        /*리프레시 토큰 삭제*/
+        refreshTokenService.deleteRefreshToken(refreshTokenString);
     }
 }
