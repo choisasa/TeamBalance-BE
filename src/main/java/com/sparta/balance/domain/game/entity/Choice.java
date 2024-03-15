@@ -1,11 +1,16 @@
 package com.sparta.balance.domain.game.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sparta.balance.domain.game.entity.Game;
 import com.sparta.balance.domain.like.entity.Like;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.engine.internal.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +18,7 @@ import java.util.List;
 @Tag(name = "choice entity", description = "밸런스 게임 선택지")
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "choice")
 public class Choice {
     @Id
@@ -30,4 +36,10 @@ public class Choice {
 
     @OneToMany(mappedBy = "choice")
     private List<Like> likes = new ArrayList<>();
+
+    @Builder
+    public Choice(String content, Game game) {
+        this.content = content;
+        this.game = game;
+    }
 }
