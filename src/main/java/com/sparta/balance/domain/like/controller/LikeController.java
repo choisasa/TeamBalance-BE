@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class LikeController {
 
-    /*
-     * LikeService : 좋아요 기능 서비스 로직
+    /* LikeService : 좋아요 기능 서비스 로직
      * 좋아요 기능 API 호출*/
     private final LikeService likeService;
     public LikeController(LikeService likeService) {
@@ -26,22 +25,22 @@ public class LikeController {
     }
 
     @Operation(summary = "밸런스 게임 선택지 좋아요", description = "밸런스 게임 선택지를 선택해서 좋아요를 추가/취소")
-    @ApiResponse(responseCode = "200", description = "좋아요 추가/취소 성공")
+    @ApiResponse(responseCode = "200", description = "선택지에 대한 좋아요 추가/취소 성공")
     @PostMapping("/game/{gameId}/choices/{choiceId}/likes")
-    public ResponseEntity<Void> likeChoice(@PathVariable Long gameId, @PathVariable Long choiceId) {
+    public ResponseEntity<String> likeChoice(@PathVariable Long gameId, @PathVariable Long choiceId) {
 
-        likeService.likeChoice(gameId, choiceId);
+        String message = likeService.likeChoice(gameId, choiceId);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-    @Operation(summary = "밸런스 게임 댓글 좋아요", description = "밸런스 게임 댓글에 대한 좋아요")
+    @Operation(summary = "밸런스 게임 댓글 좋아요", description = "밸런스 게임 댓글에 대한 좋아요 추가/취소")
     @ApiResponse(responseCode = "200", description = "댓글에 대한 좋아요 추가/취소 성공")
     @PostMapping("/game/{gameId}/comment/{commentId}/likes")
-    public ResponseEntity<Void> likeComment(@PathVariable Long gameId, @PathVariable Long commentId) {
+    public ResponseEntity<String> likeComment(@PathVariable Long gameId, @PathVariable Long commentId) {
 
-        likeService.likeComment(gameId, commentId);
+        String message = likeService.likeComment(gameId, commentId);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 }

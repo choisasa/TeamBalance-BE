@@ -52,7 +52,7 @@ public class LikeService {
     }
     
     @Transactional
-    public void likeChoice(Long gameId, Long choiceId) {
+    public String likeChoice(Long gameId, Long choiceId) {
         /*
          * 유저 정보, 게임 정보, 게임 선택지 정보 확인 후 좋아요 정보 저장
          * 에러 발생 시 rollback*/
@@ -64,25 +64,27 @@ public class LikeService {
 
         /*선택지 검증*/
         Choice choice = choiceRepository.findById(choiceId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid choice ID: " + choiceId));
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 선택지 ID: " + choiceId));
         if (!choice.getGame().getId().equals(gameId)) {
-            throw new IllegalArgumentException("Choice does not belong to the specified game");
+            throw new IllegalArgumentException("해당 선택지는 지정된 게임에 속하지 않습니다.");
         }
 
         /*좋아요 추가(취소)*/
         Optional<ChoiceLike> existingLike = choiceLikeRepository.findByUserAndChoice(user, choice);
         if (existingLike.isPresent()) {
-            // 좋아요가 이미 있으면 삭제
+            /*좋아요가 이미 있으면 삭제*/
             choiceLikeRepository.delete(existingLike.get());
+            return "선택지의 좋아요가 취소되었습니다.";
         } else {
-            // 좋아요가 없으면 추가
+            /*좋아요가 없으면 추가*/
             ChoiceLike newLike = new ChoiceLike(user, choice);
             choiceLikeRepository.save(newLike);
+            return "선택지에 좋아요가 추가되었습니다.";
         }
     }
 
     @Transactional
-    public void likeComment(Long gameId, Long commentId) {
+    public String likeComment(Long gameId, Long commentId) {
         /*유저 정보, 게임 정보, 댓글 정보 확인 후 좋아요 정보 저장
         * 에러 발생 시 rollback*/
         /*사용자 검증*/
@@ -93,28 +95,24 @@ public class LikeService {
 
         /*댓글 검증*/
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid comment ID: " + commentId));
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 댓글 ID: " + commentId));
         if (!comment.getGame().getId().equals(gameId)) {
-            throw new IllegalArgumentException("Comment does not belong to the specified game");
+            throw new IllegalArgumentException("해당 댓글은 지정된 게임에 속하지 않습니다.");
         }
 
         /*좋아요 추가(취소)*/
         Optional<CommentLike> existingLike = commentLikeRepository.findByUserAndComment(user, comment);
         if (existingLike.isPresent()) {
-            // 좋아요가 이미 있으면 삭제
+            /*좋아요가 이미 있으면 삭제*/
             commentLikeRepository.delete(existingLike.get());
+            return "댓글의 좋아요가 취소되었습니다.";
         } else {
-            // 좋아요가 없으면 추가
+            /*좋아요가 없으면 추가*/
             CommentLike newLike = new CommentLike(user, comment);
             commentLikeRepository.save(newLike);
+            return "댓글에 좋아요가 추가되었습니다.";
         }
     }
-
-    /*좋아요 기능 메서드
-    * 좋아요 없으면 추가 있으면 취소(삭제)
-    * choiceLike, commentLike 메서드*/
-
-
 
     /*사용자 검증 메서드*/
     private User getAuthenticatedUser() {
@@ -129,16 +127,4 @@ public class LikeService {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomApiException(GAME_ID_NOT_FOUND.getMessage()));
     }
-
-//    /*선택지 검증 메서드*/
-//    private Choice getChoiceById(Long choiceId) {
-//        return choiceRepository.findById(choiceId)
-//                .orElseThrow(() -> new CustomApiException(CHOICE_ID_NOT_FOUND.getMessage()));
-//    }
-//
-//    /*댓글 검증 메서드*/
-//    private Comment getCommentById(Long commentId) {
-//        return commentRepository.findById(commentId)
-//                .orElseThrow(() -> new CustomApiException(COMMENT_ID_NOT_FOUND.getMessage()));
-//    }
 }
