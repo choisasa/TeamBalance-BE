@@ -5,8 +5,9 @@ import com.sparta.balance.domain.user.dto.SignupRequestDto;
 import com.sparta.balance.domain.user.dto.UserResponseDto;
 import com.sparta.balance.domain.user.entity.User;
 import com.sparta.balance.domain.user.entity.UserRoleEnum;
-import com.sparta.balance.global.jwt.JwtUtil;
 import com.sparta.balance.domain.user.repository.UserRepository;
+import com.sparta.balance.global.handler.exception.CustomApiException;
+import com.sparta.balance.global.jwt.JwtUtil;
 import com.sparta.balance.global.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +54,7 @@ public class UserService {
         /*비밀번호 검증*/
         String password = requestDto.getPassword();
         if (!pattern.matcher(password).matches()) {
-            throw new IllegalArgumentException("비밀번호는 최소 8자리에서 최대 15자리이며, " +
+            throw new CustomApiException("비밀번호는 최소 8자리에서 최대 15자리이며, " +
                     "영어 대소문자(a~zA~Z), 숫자, 특수문자 !@#$%^&*()_~만 사용 가능합니다.");
         }
 
@@ -64,7 +65,7 @@ public class UserService {
         String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+            throw new CustomApiException("중복된 Email 입니다.");
         }
 
         /*유저 권한 부여
@@ -85,11 +86,12 @@ public class UserService {
 
         /*이메일 확인*/
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+                () -> new CustomApiException("등록된 사용자가 없습니다."));
+
 
         /*비밀번호 확인*/
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomApiException("비밀번호가 일치하지 않습니다.");
         }
 
         /*JWT 토큰 발급*/

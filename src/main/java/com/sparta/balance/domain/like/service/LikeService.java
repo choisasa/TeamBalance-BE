@@ -64,9 +64,9 @@ public class LikeService {
 
         /*선택지 검증*/
         Choice choice = choiceRepository.findById(choiceId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 선택지 ID: " + choiceId));
+                .orElseThrow(() -> new CustomApiException("유효하지 않은 선택지 ID: " + choiceId));
         if (!choice.getGame().getId().equals(gameId)) {
-            throw new IllegalArgumentException("해당 선택지는 지정된 게임에 속하지 않습니다.");
+            throw new CustomApiException("해당 선택지는 지정된 게임에 속하지 않습니다.");
         }
 
         /*좋아요 추가(취소)*/
@@ -95,9 +95,9 @@ public class LikeService {
 
         /*댓글 검증*/
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 댓글 ID: " + commentId));
+                .orElseThrow(() -> new CustomApiException("유효하지 않은 댓글 ID: " + commentId));
         if (!comment.getGame().getId().equals(gameId)) {
-            throw new IllegalArgumentException("해당 댓글은 지정된 게임에 속하지 않습니다.");
+            throw new CustomApiException("해당 댓글은 지정된 게임에 속하지 않습니다.");
         }
 
         /*좋아요 추가(취소)*/

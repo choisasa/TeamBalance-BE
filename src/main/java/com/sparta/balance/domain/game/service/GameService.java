@@ -165,10 +165,10 @@ public class GameService {
 
         String findUser = userDetails.getUsername();
         User user = userRepository.findByEmail(findUser)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(()->new CustomApiException("사용자를 찾을 수 없습니다."));
 
         if(!game.getUser().equals(user)){
-            throw  new ResponseStatusException(HttpStatus.FORBIDDEN,"해당 게임을 삭제할 수 있는 권한이 없습니다.");
+            throw  new CustomApiException("해당 게임을 삭제할 수 있는 권한이 없습니다.");
         }
 
         choiceRepository.deleteAll(game.getChoices());

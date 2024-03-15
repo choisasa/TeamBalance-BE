@@ -29,6 +29,7 @@ public class GameController {
     @Operation(summary = "밸런스 게임 생성", description = "밸런스 게임의 제목, 선택지를 등록합니다.")
     @ApiResponse(responseCode = "201", description = "밸런스 게임 생성 완료")
     public ResponseEntity<GameResponseDto> createGame(@RequestBody GameRequestDto gameRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
+
         return ResponseEntity.status(HttpStatus.CREATED).body(gameService.createGame(gameRequestDto, userDetails));
     }
 
@@ -50,9 +51,9 @@ public class GameController {
     @DeleteMapping("game/{id}")
     @Operation(summary = "밸런스 게임 삭제", description = "밸런스 게임을 삭제할 수 있습니다.")
     @ApiResponse(responseCode = "201", description = "밸런스 게임 삭제 완료")
-    public ResponseEntity<Void> deleteGame(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> deleteGame(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         gameService.deleteGame(id, userDetails);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("게임이 삭제되었습니다.");
     }
 }
 

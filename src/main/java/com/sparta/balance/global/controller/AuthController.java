@@ -49,6 +49,6 @@ public class AuthController {
                     headers.add(HttpHeaders.AUTHORIZATION, accessToken);
                     return ResponseEntity.ok().headers(headers).body("엑세스 토큰이 발급되었습니다.");
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("엑세스 토큰 발급에 실패했습니다."));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("엑세스 토큰 발급에 실패했습니다."));
     }
 }
