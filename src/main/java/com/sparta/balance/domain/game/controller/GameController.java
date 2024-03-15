@@ -1,5 +1,6 @@
 package com.sparta.balance.domain.game.controller;
 
+import com.sparta.balance.domain.game.dto.GameLikesResponseDto;
 import com.sparta.balance.domain.game.dto.GameRequestDto;
 import com.sparta.balance.domain.game.dto.GameResponseDto;
 import com.sparta.balance.domain.game.service.GameService;
@@ -34,7 +35,7 @@ public class GameController {
     @GetMapping("/game/{id}")
     @Operation(summary = "선택 밸런스 게임 조회", description = "선택한 밸런스 게임을 조회할 수 있습니다.")
     @ApiResponse(responseCode = "201", description = "밸런스 게임 조회 완료")
-    public ResponseEntity<GameResponseDto> findGame(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<GameLikesResponseDto> findGame(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(gameService.findGame(id));
     }
 

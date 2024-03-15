@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface ChoiceLikeRepository extends JpaRepository<ChoiceLike, Long> {
     Optional<ChoiceLike> findByUserAndChoice(User user, Choice choice);
+
+    Long countByChoiceId(Long id);
 }

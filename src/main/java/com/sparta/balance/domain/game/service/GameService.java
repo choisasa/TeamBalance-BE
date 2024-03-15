@@ -1,11 +1,16 @@
 package com.sparta.balance.domain.game.service;
 
+import com.sparta.balance.domain.comment.entity.Comment;
+import com.sparta.balance.domain.comment.repository.CommentRepository;
+import com.sparta.balance.domain.game.dto.GameLikesResponseDto;
 import com.sparta.balance.domain.game.dto.GameRequestDto;
 import com.sparta.balance.domain.game.dto.GameResponseDto;
 import com.sparta.balance.domain.game.entity.Choice;
 import com.sparta.balance.domain.game.entity.Game;
 import com.sparta.balance.domain.game.repository.ChoiceRepository;
 import com.sparta.balance.domain.game.repository.GameRepository;
+import com.sparta.balance.domain.like.repository.ChoiceLikeRepository;
+import com.sparta.balance.domain.like.repository.CommentLikeRepository;
 import com.sparta.balance.domain.user.entity.User;
 import com.sparta.balance.domain.user.repository.UserRepository;
 import com.sparta.balance.global.handler.exception.CustomApiException;
@@ -17,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.sparta.balance.global.handler.exception.ErrorCode.GAME_ID_NOT_FOUND;
@@ -27,14 +33,20 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-
     private final ChoiceRepository choiceRepository;
+    private final CommentRepository commentRepository;
+    private final ChoiceLikeRepository choiceLikeRepository;
+
+    private final CommentLikeRepository commentLikeRepository;
 
 
-    public GameService(GameRepository gameRepository, UserRepository userRepository, ChoiceRepository choiceRepository) {
+    public GameService(GameRepository gameRepository, UserRepository userRepository, ChoiceRepository choiceRepository, CommentRepository commentRepository, ChoiceLikeRepository choiceLikeRepository, CommentLikeRepository commentLikeRepository) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.choiceRepository = choiceRepository;
+        this.commentRepository = commentRepository;
+        this.choiceLikeRepository = choiceLikeRepository;
+        this.commentLikeRepository = commentLikeRepository;
     }
 
     /*
@@ -85,9 +97,9 @@ public class GameService {
     }
 
     /*
-     * 선택 밸런스 게임 조회*/
+     * 선택한 밸런스 게임 조회*/
     @Transactional
-    public GameResponseDto findGame(Long id) {
+    public GameLikesResponseDto findGame(Long id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new CustomApiException(GAME_ID_NOT_FOUND.getMessage()));
         /*
@@ -95,10 +107,35 @@ public class GameService {
 
         List<Choice> choices = game.getChoices();
 
-        return GameResponseDto.builder()
+        // 각 선택지의 좋아요 개수 계산
+        Map<Long, Long> choiceLikeCounts = choices.stream()
+                .collect(Collectors.toMap(
+                        Choice::getId,
+                        choice -> choiceLikeRepository.countByChoiceId(choice.getId())
+                ));
+
+        // 댓글에 대한 좋아요 개수 계산
+        List<Comment> comments = commentRepository.findByGameId(id);
+        long numberOfCommentLikes = comments.stream()
+                .mapToLong(comment -> commentLikeRepository.countByCommentId(comment.getId()))
+                .sum();
+
+        // 각 댓글에 대한 좋아요 개수 계산
+        Map<Long, Long> commentLikeCounts = comments.stream()
+                .collect(Collectors.toMap(
+                        Comment::getId,
+                        comment -> commentLikeRepository.countByCommentId(comment.getId())
+                ));
+
+        // GameResponseDto 생성
+        return GameLikesResponseDto.builder()
                 .id(id)
                 .gameTitle(game.getGameTitle())
-                .choices(game.getChoices())
+                .choices(choices)
+                .comments(comments)
+                .choiceLikeCounts(choiceLikeCounts)
+                .numberOfCommentLikes(numberOfCommentLikes)
+                .commentLikeCounts(commentLikeCounts)
                 .build();
     }
 //        List<Choice> choices = new ArrayList<>();
