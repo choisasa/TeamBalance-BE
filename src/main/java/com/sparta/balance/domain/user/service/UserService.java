@@ -5,8 +5,10 @@ import com.sparta.balance.domain.user.dto.SignupRequestDto;
 import com.sparta.balance.domain.user.dto.UserResponseDto;
 import com.sparta.balance.domain.user.entity.User;
 import com.sparta.balance.domain.user.entity.UserRoleEnum;
-import com.sparta.balance.global.jwt.JwtUtil;
 import com.sparta.balance.domain.user.repository.UserRepository;
+import com.sparta.balance.global.handler.exception.CustomApiException;
+import com.sparta.balance.global.jwt.JwtUtil;
+import com.sparta.balance.global.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,10 +29,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    public UserService(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+    private final RefreshTokenService refreshTokenService;
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
     }
 
     /*
@@ -49,7 +54,7 @@ public class UserService {
         /*비밀번호 검증*/
         String password = requestDto.getPassword();
         if (!pattern.matcher(password).matches()) {
-            throw new IllegalArgumentException("비밀번호는 최소 8자리에서 최대 15자리이며, " +
+            throw new CustomApiException("비밀번호는 최소 8자리에서 최대 15자리이며, " +
                     "영어 대소문자(a~zA~Z), 숫자, 특수문자 !@#$%^&*()_~만 사용 가능합니다.");
         }
 
@@ -60,7 +65,7 @@ public class UserService {
         String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+            throw new CustomApiException("중복된 Email 입니다.");
         }
 
         /*유저 권한 부여
@@ -68,12 +73,38 @@ public class UserService {
         UserRoleEnum role = UserRoleEnum.USER;
 
         /*DB에 유저 정보 저장*/
-        User user = new User(requestDto.getEmail(), requestDto.getPassword(), requestDto.getUsername(), role);
+        User user = new User(requestDto.getEmail(), password, requestDto.getUsername(), role);
 
         userRepository.save(user);
     }
 
+    /*로그인 로직
+    * 입력된 이메일과 비밀번호 일치 여부 검사 후 유저 정보로 JWT 토큰 생성 후 유저 이름과 함께 반환*/
     public UserResponseDto loginUser(LoginRequestDto requestDto) {
-        return null;
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
+
+        /*이메일 확인*/
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomApiException("등록된 사용자가 없습니다."));
+
+
+        /*비밀번호 확인*/
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomApiException("비밀번호가 일치하지 않습니다.");
+        }
+
+        /*JWT 토큰 발급*/
+        String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole());
+        String refreshTokenString = jwtUtil.createRefreshToken(user.getEmail(), user.getRole());
+        refreshTokenService.createAndSaveRefreshToken(user.getEmail(), refreshTokenString);
+
+        return new UserResponseDto(user.getUsername(), accessToken, refreshTokenString);
+    }
+
+    /*로그아웃 로직*/
+    public void logoutUser(String refreshTokenString) {
+        /*리프레시 토큰 삭제*/
+        refreshTokenService.deleteRefreshToken(refreshTokenString);
     }
 }

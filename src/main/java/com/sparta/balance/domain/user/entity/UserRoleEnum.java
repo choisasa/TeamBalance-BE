@@ -1,5 +1,8 @@
 package com.sparta.balance.domain.user.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum UserRoleEnum {
     USER(Authority.USER);
 
@@ -7,10 +10,6 @@ public enum UserRoleEnum {
 
     UserRoleEnum(String authority) {
         this.authority = authority;
-    }
-
-    public String getAuthority() {
-        return this.authority;
     }
 
     public static class Authority {

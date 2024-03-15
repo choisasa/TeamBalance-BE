@@ -1,5 +1,10 @@
 package com.sparta.balance.global.handler.exception;
 
+
+import lombok.Getter;
+
+import java.util.Map;
+
 @Getter
 public class CustomValidationException extends RuntimeException {
 
