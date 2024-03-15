@@ -25,13 +25,27 @@ public class Comment {
     @Schema(description = "댓글 내용", nullable = false, example = "나는 짜장파")
     private String content;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     @Schema(description = "회원 ID", nullable = false, example = "1")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "game_id")
     @Schema(description = "게임 ID", nullable = false, example = "1")
     private Game game;
+
+    public Comment(String content, User user, Game game) {
+        this.content = content;
+        this.user = user;
+        this.game = game;
+    }
+
+    public Comment() {
+
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
+    }
 }

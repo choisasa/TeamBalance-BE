@@ -1,7 +1,9 @@
 package com.sparta.balance.global.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,4 +33,5 @@ public class RefreshToken {
         this.email = email;
         this.expiryDate = expiryDate;
     }
+<<<<<<< HEAD
 }
