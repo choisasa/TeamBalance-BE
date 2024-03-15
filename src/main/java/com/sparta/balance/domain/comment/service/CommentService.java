@@ -63,6 +63,8 @@ public class CommentService {
     public List<CommentResponseDto> getComment(Long gameId, UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new CustomApiException("사용자를 찾을 수 없습니다"));
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomApiException("게임을 찾을 수 없습니다"));
 
         List<Comment> comments = commentRepository.findByGameId(gameId);
 
