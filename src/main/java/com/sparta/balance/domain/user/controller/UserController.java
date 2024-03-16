@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Tag(name = "UserController", description = "회원 가입, 로그인 API 컨트롤러")
 @Slf4j(topic = "회원 가입, 로그인")
 @RestController
@@ -48,24 +45,17 @@ public class UserController {
     @Operation(summary = "로그인", description = "회원 이메일(아이디), 비밀번호를 입력해 로그인할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "로그인 완료")
     /*로그인 기능 호출*/
-    public ResponseEntity<List<String>> loginUser(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<UserResponseDto> loginUser(@RequestBody LoginRequestDto requestDto) {
         UserResponseDto userResponseDto = userService.loginUser(requestDto);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, userResponseDto.getAccessToken());
 
-        /*리프레시 토큰, 유저 이름, 성공 메시지를 리스트에 추가*/
-        List<String> responseBody = Arrays.asList(
-                userResponseDto.getUsername(),
-                userResponseDto.getRefreshToken(),
-                "로그인에 성공했습니다."
-        );
-
         /*로그인 완료 후 엑세스 토큰, 리프레시 토큰, 유저이름, 성공 메시지 반환
         * 실패 시 에러 메시지 반환*/
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(responseBody);
+                .body(userResponseDto);
     }
 
     /*로그아웃 기능 호출*/

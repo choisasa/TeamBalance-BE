@@ -39,7 +39,7 @@ public class AuthController {
         /*리프레시 토큰 검증*/
         boolean isValidRefreshToken = refreshTokenService.validateRefreshToken(refreshToken);
         if (!isValidRefreshToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리프레시 토큰 검증이 실패했습니다.");
         }
 
         /*리프레시 토큰으로 새로운 엑세스 토큰 발급*/
