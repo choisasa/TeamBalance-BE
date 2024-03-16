@@ -1,6 +1,7 @@
 package com.sparta.balance.domain.user.controller;
 
 import com.sparta.balance.domain.user.dto.LoginRequestDto;
+import com.sparta.balance.domain.user.dto.LoginResponseDto;
 import com.sparta.balance.domain.user.dto.SignupRequestDto;
 import com.sparta.balance.domain.user.dto.UserResponseDto;
 import com.sparta.balance.domain.user.service.UserService;
@@ -45,17 +46,22 @@ public class UserController {
     @Operation(summary = "로그인", description = "회원 이메일(아이디), 비밀번호를 입력해 로그인할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "로그인 완료")
     /*로그인 기능 호출*/
-    public ResponseEntity<UserResponseDto> loginUser(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<LoginResponseDto> loginUser(@RequestBody LoginRequestDto requestDto) {
         UserResponseDto userResponseDto = userService.loginUser(requestDto);
 
+        /*엑세스 토큰을 Authorization Header로 반환*/
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, userResponseDto.getAccessToken());
 
-        /*로그인 완료 후 엑세스 토큰, 리프레시 토큰, 유저이름, 성공 메시지 반환
+        LoginResponseDto loginResponseDto = new LoginResponseDto(
+                userResponseDto.getUsername(), userResponseDto.getRefreshToken(), "로그인에 성공했습니다."
+        );
+
+        /*로그인 완료 후  리프레시 토큰, 유저이름, 성공 메시지 반환
         * 실패 시 에러 메시지 반환*/
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(userResponseDto);
+                .body(loginResponseDto);
     }
 
     /*로그아웃 기능 호출*/
