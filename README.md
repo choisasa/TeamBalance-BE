@@ -73,3 +73,19 @@ https://www.notion.so/6c37539e053d481ab797837d140275b1
  
  https://www.youtube.com/watch?v=25IuUcx7OjU&ab_channel=%EC%9D%B4%ED%98%9C%EC%9D%B8 
 
+  -----
+ UI
+ -----
+
+ ![스크린샷 2024-03-18 230428](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/c27e3ebe-05e6-40a4-88b2-32d567deda70)
+
+ ![스크린샷 2024-03-18 230027](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/1343bdfa-3f03-4e3e-92b5-5421dd228758)
+
+ ![스크린샷 2024-03-18 230236](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/e8aa9f84-52af-4321-9085-d79342344c68)
+
+ ![스크린샷 2024-03-18 230300](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/c9aa11e7-b6a9-4916-a625-e3f7253024b9)
+
+
+
+
+
