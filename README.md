@@ -1,16 +1,44 @@
-미니 프로젝트 TeamBalance-BE
+# 미니 프로젝트 TeamBalance-BE
 -----
 - [ ]  주제 : TMI 밸런스게임 
 - [ ]  설명 : 밸런스게임을 하는 웹사이트를 만듭니다.
 
 -----
- UCD
+## 스택
+-----
+
+- JDK 17
+- Spring Boot 3.2.3
+- Spring Boot JPA
+- Spring Boot Validation
+- Spring Boot Security
+- Swager UI
+- QueryDsl
+- JWT
+- EC2, RDS
+- MySQL
+
+-----
+## UCD
 -----
 
 ![image](https://github.com/yuha00e/TeamBalance-BE/assets/157124813/6d5da9f1-5d92-4f0e-86c5-b18344f76afd)
 
 -----
-Commit Convention
+## API 명세서
+-----
+
+https://documenter.getpostman.com/view/33070046/2sA2xnyVjE
+
+-----
+## ERD
+-----
+
+![ERD](https://github.com/yuha00e/TeamBalance-BE/assets/121149088/577c6eed-0fee-477f-a998-bae288e5341f)
+
+-----
+## Commit Convention
+
 -----
  
 ![스크린샷 2024-03-01 오후 3 20 00](https://github.com/yuha00e/spring-lv3/assets/157681548/1fecc129-c6c1-4611-8630-6443d1ff7caa)
