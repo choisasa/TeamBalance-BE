@@ -60,3 +60,16 @@ TeamBalance's notion
  -----
 
 https://ancient-tumbleweed-92a.notion.site/2-SA-a86ba63e762146af8516ebfdd5d44846
+
+ -----
+TeamBalance's summury
+ -----
+
+https://www.notion.so/6c37539e053d481ab797837d140275b1
+
+ -----
+ Test Video
+ -----
+ 
+ https://www.youtube.com/watch?v=25IuUcx7OjU&ab_channel=%EC%9D%B4%ED%98%9C%EC%9D%B8 
+
